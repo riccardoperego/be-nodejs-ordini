@@ -23,7 +23,8 @@ MongoClient.connect(url, function (err, client) {
     console.log("Connected successfully to MongoDB");
 
     db = client.db(dbName);
-
+    
+    // when conncted to mongo, start listen
     app.listen(3000, function () {
         console.log("listening on 3000");
     });
@@ -37,12 +38,25 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
 
+app.all('/quotes', (req, res, next) => {
+    console.log('intercettato richiesta ');
+    next();
+});
+
 app.post('/quotes', (req, res) => {
     console.log(req.body);
     db.collection('quotes').save(req.body, (err, result) => {
         if (err) return console.log(err)
 
         console.log('saved to database')
-        res.redirect('/')
+        res.json(result)
     })
-})
+});
+
+app.get('/quotes', (req, res) => {
+    db.collection('quotes').find().toArray(function (err, results) {
+        console.log(results)
+        res.json(results);
+    })
+
+});
