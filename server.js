@@ -2,8 +2,10 @@ console.log("May Node be with you");
 
 const express = require('express');
 const bodyParser= require('body-parser');
+const mongodb = require('mongodb');
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
+const querystring = require('querystring');
 
 
 // Connection URL
@@ -15,7 +17,8 @@ const app = express();
 
 var db;
 
-app.use(bodyParser.urlencoded({extended: true}))
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 
 // Use connect method to connect to the server
 MongoClient.connect(url, function (err, client) {
@@ -38,32 +41,44 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
 
-app.all('/quotes', (req, res, next) => {
-    console.log('intercettato richiesta ');
-    next();
-});
-
-app.post('/quotes', (req, res) => {
-    console.log(req.body);
-    db.collection('quotes').save(req.body, (err, result) => {
-        if (err) return console.log(err)
-
-        console.log('saved to database')
-        res.json(result)
-    })
-});
-
-app.get('/quotes', (req, res) => {
-    db.collection('quotes').find().toArray(function (err, results) {
-        console.log(results)
-        res.json(results);
-    })
-
-});
-
 app.get('/prodotti', (req, res) => {
-    db.collection('prodotti').find().toArray(function(err, results){
-        console.log("Richiesti prodotti: " + results)
+
+    // /prodotti?nome=piccola
+    console.log("Ricerca prodotti");
+    // controllo se son stati passati dei parametri per filtrare la ricerca
+    var filter = undefined;
+    if (req.query && req.query.nome) {
+        console.log("Nome passato come paramtro di ricerca: " + req.query.nome);
+        filter = { "nome": new RegExp(req.query.nome, 'i') };
+    }
+    // cerco i prodotti
+    db.collection('prodotti').find(filter).toArray(function (err, results) {
+        console.log(results)
         res.json(results);
     });
 });
+
+app.post('/prodotti', (req, res) => {
+    console.log(req.body);
+
+    // aggiungo il nuovo prodotto
+    db.collection('prodotti').save(req.body, (err, result) => {
+        if (err) return console.log(err)
+        console.log('saved to database')
+        console.log(result);
+        res.json(result)
+    });
+});
+
+// elimina un prodotto in base all'id
+app.delete('/prodotti/:id', (req, res) => {
+    console.log("Richiesta di eleiminazione dell'id " + req.params.id);
+    db.collection('prodotti').deleteOne({ _id: new mongodb.ObjectID(req.params.id) }, function (err, results) {
+        if (err) {
+            console.log("failed");
+            res.send(404, 'prodotto non trovato');
+        }
+        res.send(200, 'Prodotto eliminato con successo');
+    })
+});
+
