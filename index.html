@@ -8,10 +8,20 @@
 
 <body>
     May Node and Express be with you.
-    
-    <form action="/quotes" method="POST">
-        <input type="text" placeholder="name" name="name">
-        <input type="text" placeholder="quote" name="quote">
+
+    <form action="/prodotti" method="POST">
+        <label for="nome">Nome:</label>
+        <input type="text" placeholder="nome" name="nome">
+        <br>
+        <label for="categoria">Categoria:</label>
+        <input type="text" placeholder="categoria" name="categoria">
+        <br>
+        <label for="materiale">Materiale:</label>
+        <input type="text" placeholder="materiale" name="materiale">
+        <br>
+        <label for="prezzo">Prezzo:</label>
+        <input type="number" step="0.25" min="0" name="prezzo">
+        <br>
         <button type="submit">Submit</button>
     </form>
 </body>

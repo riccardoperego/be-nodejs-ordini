@@ -1,0 +1,24 @@
+db.prodotti.insert([{
+    nome: "Fasciatoio",
+    categoria: "",
+    materiale: "stoffa",
+    prezzo: 25
+},
+{
+    nome: "Bavaglia piccola",
+    categoria: "",
+    materiale: "stoffa",
+    prezzo: 5
+},
+{
+    nome: "Bavaglia grande",
+    categoria: "",
+    materiale: "stoffa",
+    prezzo: 7
+}])
+
+
+
+db.prodotti.update({nome: "Bavaglia grande"},{
+    $set: { prezzo: 8 } 
+})

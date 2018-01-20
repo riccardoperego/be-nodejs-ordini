@@ -9,7 +9,7 @@ const assert = require('assert');
 // Connection URL
 const url = 'mongodb://localhost:27017';
 // Database Name
-const dbName = 'dbordini';
+const dbName = 'ordini_vale';
 
 const app = express();
 
@@ -59,4 +59,11 @@ app.get('/quotes', (req, res) => {
         res.json(results);
     })
 
+});
+
+app.get('/prodotti', (req, res) => {
+    db.collection('prodotti').find().toArray(function(err, results){
+        console.log("Richiesti prodotti: " + results)
+        res.json(results);
+    });
 });
