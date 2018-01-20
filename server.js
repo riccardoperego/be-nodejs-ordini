@@ -11,9 +11,6 @@ const schemaDefinition = require('./schemaDefinition');
 
 var Schema = mongoose.Schema;
 
-
-
-
 // Connection URL
 const url = 'mongodb://localhost:27017/ordini_vale';
 // Database Name
@@ -38,6 +35,7 @@ db.once('open', function () {
 
 var Cliente = db.model('cliente', schemaDefinition.schemaCliente);
 var Prodotto = db.model('prodotto', schemaDefinition.schemaProdotto);
+var Ordine = db.model('ordine', schemaDefinition.schemaOrdine);
 
 
 // Use connect method to connect to the server
@@ -152,21 +150,12 @@ app.delete('/clienti/:id', (req, res) => {
 
 // crea un ordine associando dei prodotti a dei clienti
 app.get('/ordini', (req, res) => {
-
-    db.collection('ordini').aggregate([
-        {
-            $lookup:
-                {
-                    from: 'clienti',
-                    localField: 'cliente',
-                    foreignField: '_id',
-                    as: 'cliente'
-                }
+    Ordine.find().populate('cliente').populate('prodotti').exec((err, ordini) => {
+        if (err) {
+            console.error(err);
+            return res.send(500, err);
         }
-    ], function (err, res) {
-        if (err) throw err;
-        console.log(JSON.stringify(res));
-        res.send(200);
+        res.send(200, ordini);
     });
 
 });
@@ -174,12 +163,13 @@ app.get('/ordini', (req, res) => {
 app.post('/ordini', (req,res) => {
     console.log(req.body);
 
-    db.collection('ordini').save(req.body, (err, result) => {
-        if (err){
+    var nuovoOrdine = new Ordine(req.body);
+    nuovoOrdine.save((err, ordine) => {
+        if(err){
             console.error(err);
-            return res.send(500, "Non è possibile salvare l'ordine");
+            return res.send(500, err);
         }
-        console.log("Ordine salvato a db");
-        res.send(200, result);
+        res.send(200, ordine);
     });
+    
 });

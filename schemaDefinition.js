@@ -31,5 +31,20 @@ exports.schemaProdotto = new mongoose.Schema({
     prezzo:{
         type: Number,
         required: true
-    }
+    },
+    dimensioni: String
+});
+
+exports.schemaOrdine = new mongoose.Schema({
+    cliente: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'cliente'
+    },
+    prodotti: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'prodotto'
+    }],
+    dataOrdine: Date,
+    spedizione: String,
+    totaleOrdine: Number
 });

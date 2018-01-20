@@ -1,3 +1,22 @@
 mongod -> start the mongodb instance
 mongo -> mongodb shell (show dbs -> show the dbs in mongodb)
 npm run dev -> start server and refresh the code on save
+
+
+
+
+
+
+esempio di inserimento ordine:
+{
+  "cliente": "5a6379517b33ce0d44d5114a",
+  "prodotti": [
+    {
+      "_id": "5a638623f9da090ff83069b1"
+    },{
+      "_id":"5a638635f9da090ff83069b2"
+    }
+  ],
+  "dataOrdine": 20180120,
+  "totaleOrdine": 20
+}
